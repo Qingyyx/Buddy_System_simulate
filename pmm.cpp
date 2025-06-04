@@ -13,6 +13,9 @@ struct Area {
     Area(uint32_t s, uint32_t e) : start(s), end(e) { }
 };
 
+
+size_t __lg(size_t n) { return n ? 63 - __builtin_clzll(n) : 0; }
+
 struct PMM {
     vector<vector<int>> block;
 
@@ -22,7 +25,7 @@ struct PMM {
     }
 
     size_t getfriend(const Area& area) {
-        size_t size = area.end - area.start + 1;
+        size_t size = area.end - area.start;
         size_t bits = __lg(size);
         size_t pos = area.start ^ (1 << bits);
         return pos;
@@ -68,7 +71,7 @@ struct PMM {
         if (size == 0 || size > ALLOC_MAX) {
             return Area(0, 0); // Invalid size
         }
-        size_t bits = __lg(size - 1) + 1; // Round up to the next power of two
+        size_t bits = size == 1 ? 0 : __lg(size - 1) + 1; // Round up to the next power of two
         return split_block(bits);
     }
 
